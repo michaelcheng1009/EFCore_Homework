@@ -24,21 +24,20 @@ namespace EFCore_Homework.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Person>>> GetPerson()
         {
-            return await _context.Person.ToListAsync();
+            return await _context.Person.Where(x => !x.IsDeleted).ToListAsync();
         }
 
         // GET: api/People/5
         [HttpGet("read/{id}")]
         public async Task<ActionResult<Person>> GetPerson(int id)
         {
-            var person = await _context.Person.FindAsync(id);
+            var person = await _context.Person.Where(x=>!x.IsDeleted && x.Id == id).FirstAsync();
 
             if (person == null)
             {
                 return NotFound();
             }
 
-            var test = "0";
             return person;
         }
 
@@ -96,7 +95,11 @@ namespace EFCore_Homework.Controllers
                 return NotFound();
             }
 
-            _context.Person.Remove(person);
+            person.IsDeleted = true;
+
+            _context.Entry(person).State = EntityState.Modified;
+
+            //_context.Person.Remove(person);
             await _context.SaveChangesAsync();
 
             return person;

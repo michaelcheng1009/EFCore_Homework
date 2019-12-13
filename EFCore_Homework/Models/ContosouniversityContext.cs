@@ -16,6 +16,19 @@ namespace EFCore_Homework.Models
         {
         }
 
+        public override int SaveChanges()
+        {
+            var entities = this.ChangeTracker.Entries();
+
+            foreach(var entry in entities)
+            {
+                if (entry.State == EntityState.Modified)
+                    entry.CurrentValues.SetValues(new { DateModified = DateTime.Now });
+            }
+
+            return base.SaveChanges();
+        }
+
         public virtual DbSet<Course> Course { get; set; }
         public virtual DbSet<CourseInstructor> CourseInstructor { get; set; }
         public virtual DbSet<Department> Department { get; set; }

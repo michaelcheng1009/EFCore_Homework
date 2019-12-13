@@ -22,6 +22,8 @@ namespace EFCore_Homework.Models
         public int Credits { get; set; }
         [Column("DepartmentID")]
         public int DepartmentId { get; set; }
+        public DateTime DateModified { get; set; }
+        public bool IsDeleted { get; set; }
 
         [ForeignKey(nameof(DepartmentId))]
         [InverseProperty("Course")]

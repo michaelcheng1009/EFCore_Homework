@@ -25,6 +25,8 @@ namespace EFCore_Homework.Models
         [Column("InstructorID")]
         public int? InstructorId { get; set; }
         public byte[] RowVersion { get; set; }
+        public DateTime DateModified { get; set; }
+        public bool IsDeleted { get; set; }
 
         [ForeignKey(nameof(InstructorId))]
         [InverseProperty(nameof(Person.Department))]

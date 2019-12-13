@@ -4,14 +4,16 @@ using EFCore_Homework.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EFCore_Homework.Migrations
 {
     [DbContext(typeof(ContosouniversityContext))]
-    partial class ContosouniversityContextModelSnapshot : ModelSnapshot
+    [Migration("20191213130951_Datemodified")]
+    partial class Datemodified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,9 +40,6 @@ namespace EFCore_Homework.Migrations
                         .HasColumnName("DepartmentID")
                         .HasColumnType("int")
                         .HasDefaultValueSql("((1))");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(50)")
@@ -93,9 +92,6 @@ namespace EFCore_Homework.Migrations
                     b.Property<int?>("InstructorId")
                         .HasColumnName("InstructorID")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(50)")
@@ -194,9 +190,6 @@ namespace EFCore_Homework.Migrations
 
                     b.Property<DateTime?>("HireDate")
                         .HasColumnType("datetime");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()

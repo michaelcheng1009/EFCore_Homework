@@ -24,14 +24,14 @@ namespace EFCore_Homework.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Course>>> GetCourse()
         {
-            return await _context.Course.ToListAsync();
+            return await _context.Course.Where(x => !x.IsDeleted).ToListAsync();
         }
 
         // GET: api/Courses/5
         [HttpGet("read/{id}")]
         public async Task<ActionResult<Course>> GetCourse(int id)
         {
-            var course = await _context.Course.FindAsync(id);
+            var course = await _context.Course.Where(x => !x.IsDeleted && x.CourseId == id).FirstAsync();
 
             if (course == null)
             {
@@ -94,11 +94,26 @@ namespace EFCore_Homework.Controllers
             {
                 return NotFound();
             }
+            course.IsDeleted = true;
+            //_context.Course.Remove(course);
 
-            _context.Course.Remove(course);
+            _context.Entry(course).State = EntityState.Modified;
+
             await _context.SaveChangesAsync();
 
             return course;
+        }
+
+        [HttpGet("VwCourseStudents")]
+        public async Task<ActionResult<List<VwCourseStudents>>> CourseStudents()
+        {
+            return await _context.VwCourseStudents.ToListAsync();
+        }
+
+        [HttpGet("VwCourseStudentCount")]
+        public async Task<ActionResult<List<VwCourseStudentCount>>> VwCourseStudentCount()
+        {
+            return await _context.VwCourseStudentCount.ToListAsync();
         }
 
         private bool CourseExists(int id)

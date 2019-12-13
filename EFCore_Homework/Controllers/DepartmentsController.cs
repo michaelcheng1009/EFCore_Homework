@@ -25,14 +25,14 @@ namespace EFCore_Homework.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Department>>> GetDepartment()
         {
-            return await _context.Department.ToListAsync();
+            return await _context.Department.Where(x => !x.IsDeleted).ToListAsync();
         }
 
         // GET: api/Departments/5
         [HttpGet("read/{id}")]
         public async Task<ActionResult<Department>> GetDepartment(int id)
         {
-            var department = await _context.Department.FindAsync(id);
+            var department = await _context.Department.Where(x => !x.IsDeleted && x.DepartmentId == id).FirstAsync();
 
             if (department == null)
             {
@@ -90,7 +90,7 @@ namespace EFCore_Homework.Controllers
         }
 
         // DELETE: api/Departments/5
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("deletebySP/{id}")]
         public async Task<ActionResult<Department>> DeleteDepartment(int id)
         {
             var department = await _context.Department.FindAsync(id);
@@ -107,6 +107,40 @@ namespace EFCore_Homework.Controllers
                 .ExecuteSqlInterpolatedAsync($"EXECUTE [dbo].[Department_Delete] {department.DepartmentId}, {department.RowVersion}");
 
             return department;
+        }
+        [HttpDelete("deletebyflag/{id}")]
+        public async Task<ActionResult<Department>> DeletebyFlagDepartment(int id)
+        {
+            var department = await _context.Department.FindAsync(id);
+            if (department == null)
+            {
+                return NotFound();
+            }
+            department.IsDeleted = true;
+
+            //_context.Department.Remove(department);
+            //await _context.SaveChangesAsync();
+
+            _context.Entry(department).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+
+            return department;
+        }
+
+        [HttpGet("VwCourseStudentCount")]
+        public async Task<ActionResult<List<VwDepartmentCourseCount>>> DepartmentCourseCount()
+        {
+            var Result =  await _context
+                .VwDepartmentCourseCount
+                .FromSqlInterpolated($"SELECT * FROM dbo.vwDepartmentCourseCount")
+                .Select(x => new VwDepartmentCourseCount()
+                {
+                    DepartmentId = x.DepartmentId,
+                    Name = x.Name,
+                    CourseCount = x.CourseCount
+                }).ToListAsync();
+            return Result;
         }
 
         private bool DepartmentExists(int id)

@@ -4,14 +4,16 @@ using EFCore_Homework.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EFCore_Homework.Migrations
 {
     [DbContext(typeof(ContosouniversityContext))]
-    partial class ContosouniversityContextModelSnapshot : ModelSnapshot
+    [Migration("20191213132200_Isdeleted")]
+    partial class Isdeleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
