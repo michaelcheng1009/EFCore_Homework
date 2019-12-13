@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EFCore_Homework.Models;
+using Microsoft.Data.SqlClient;
 
 namespace EFCore_Homework.Controllers
 {
@@ -52,23 +53,24 @@ namespace EFCore_Homework.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(department).State = EntityState.Modified;
+            //_context.Entry(department).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DepartmentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            //try
+            //{
+            //    await _context.SaveChangesAsync();
+            //}
+            //catch (DbUpdateConcurrencyException)
+            //{
+            //    if (!DepartmentExists(id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
+            await _context.Database.ExecuteSqlInterpolatedAsync($"EXECUTE Department_Update {department.DepartmentId},{department.Name},{department.Budget},{department.StartDate},{department.InstructorId},{department.RowVersion}");
 
             return NoContent();
         }
@@ -79,10 +81,12 @@ namespace EFCore_Homework.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<Department>> PostDepartment(Department department)
         {
-            _context.Department.Add(department);
-            await _context.SaveChangesAsync();
+            var InsertResult = await _context
+                .Department
+                .FromSqlInterpolated($"EXECUTE [dbo].[Department_Insert] {department.Name}, {department.Budget}, {department.StartDate}, {department.InstructorId}")
+                .Select(x => x.DepartmentId).ToListAsync();
 
-            return CreatedAtAction("GetDepartment", new { id = department.DepartmentId }, department);
+            return CreatedAtAction("GetDepartment", new { id = InsertResult.FirstOrDefault() }, department);
         }
 
         // DELETE: api/Departments/5
@@ -95,8 +99,12 @@ namespace EFCore_Homework.Controllers
                 return NotFound();
             }
 
-            _context.Department.Remove(department);
-            await _context.SaveChangesAsync();
+            //_context.Department.Remove(department);
+            //await _context.SaveChangesAsync();
+
+            var InsertResult = _context
+                .Database
+                .ExecuteSqlInterpolatedAsync($"EXECUTE [dbo].[Department_Delete] {department.DepartmentId}, {department.RowVersion}");
 
             return department;
         }

@@ -24,7 +24,6 @@ namespace EFCore_Homework.Models
         public DateTime StartDate { get; set; }
         [Column("InstructorID")]
         public int? InstructorId { get; set; }
-        [Required]
         public byte[] RowVersion { get; set; }
 
         [ForeignKey(nameof(InstructorId))]
